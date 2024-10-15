@@ -1,0 +1,142 @@
+[
+    "users/login",
+    "users/logout",
+    "users/createToken",
+    "users/changePassword",
+    "users/checkForUpdate",
+
+    "users/session/delete",
+
+    "users/profile/get",
+    "users/profile/set",
+    
+
+    "dashboard/stats/get",
+    "dashboard/stats/getTop",
+    "dashboard/stats/deleteAll",
+    
+
+    "zones/list",
+    "zones/create",
+    "zones/import",
+    "zones/export",
+    "zones/clone",
+    "zones/convert",
+    "zones/enable",
+    "zones/delete",
+    "zones/resync",
+
+    "zones/options",
+    "zones/options/set",
+    
+    "zones/permissions/get",
+    "zones/permissions/set",
+
+    "zones/dnssec/sign",
+    "zones/dnssec/unsign",
+    "zones/dnssec/viewDS",
+
+    "zones/dnssec/properties/get",
+    "zones/dnssec/properties/convertToNSEC",
+    "zones/dnssec/properties/convertToNSEC3",
+    "zones/dnssec/properties/updateNSEC3Params",
+    "zones/dnssec/properties/updateDnsKeyTtl",
+    "zones/dnssec/properties/generatePrivateKey",
+    "zones/dnssec/properties/updatePrivateKey",
+    "zones/dnssec/properties/publishAllPrivateKeys",
+    "zones/dnssec/properties/rolloverDnsKey",
+    "zones/dnssec/properties/retireDnsKey",
+    
+    "zones/records/add",
+    "zones/records/get",
+    "zones/records/update",
+    "zones/records/delete",
+
+    "zones/catalogs/list",
+
+
+    "cache/list",
+    "cache/delete",
+    
+
+    "allowed/list",
+    "allowed/add",
+    "allowed/delete",
+    "allowed/flush",
+    "allowed/import",
+    "allowed/export",
+
+
+    "blocked/list",
+    "blocked/add",
+    "blocked/delete",
+    "blocked/flush",
+    "blocked/import",
+    "blocked/export",
+
+
+    "apps/list",
+    "apps/listStoreApps",
+    "apps/downloadAndInstall",
+    "apps/downloadAndUpdate",
+    "apps/install",
+    "apps/update",
+    "apps/uninstall",
+
+    "apps/config/get",
+    "apps/config/set",
+
+
+    "dnsClient/resolve",
+    
+
+    "settings/get",
+    "settings/set",
+    "settings/getTsigKeyNames",
+    "settings/forceUpdateBlockLists",
+    "settings/temporaryDisableBlocking",
+    "settings/backup",
+    "settings/restore",
+
+
+    "dhcp/leases/list",
+    "dhcp/leases/remove",
+    "dhcp/leases/convertToReserved",
+    "dhcp/leases/convertToDynamic",
+
+    "dhcp/scopes/list",
+    "dhcp/scopes/get",
+    "dhcp/scopes/set",
+    "dhcp/scopes/addReservedLease",
+    "dhcp/scopes/removeReservedLease",
+    "dhcp/scopes/enable",
+    "dhcp/scopes/disable",
+    "dhcp/scopes/delete",
+
+
+    "admin/sessions/list",
+    "admin/sessions/createToken",
+    "admin/sessions/delete",
+
+    "admin/users/list",
+    "admin/users/create",
+    "admin/users/get",
+    "admin/users/set",
+    "admin/users/delete",
+
+    "admin/groups/list",
+    "admin/groups/create",
+    "admin/groups/get",
+    "admin/groups/set",
+    "admin/groups/delete",
+
+    "admin/permissions/list",
+    "admin/permissions/get",
+    "admin/permissions/set",
+
+    "admin/logs/list",
+    "admin/logs/download",
+    "admin/logs/delete",
+    "admin/logs/deleteAll",
+    "admin/logs/query"
+]
