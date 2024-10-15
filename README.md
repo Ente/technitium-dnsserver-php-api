@@ -4,7 +4,9 @@ This API client is intended to be used with Technitiums DNS Server
 
 ## Installation
 
-Via Git: `git clone https://github.com/ente/technitium-dnsserver-php-api.git`
+Via Git: `git clone https://github.com/ente/technitium-dnsserver-php-api.git` or `composer require ente/technitium-dnsserver-php-api`
+
+Then: `require_once "/path/to/vendor/autoload.php";` & `use Technitium\DNSServer\API\API;`
 Then: `require_once "/path/to/API.dnsserver.ente.php";` & `use Technitium\DNSServer\API\API;`
 
 ## Configuration

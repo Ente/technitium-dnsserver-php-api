@@ -1,7 +1,7 @@
 {
     "name": "ente/technitium-dnsserver-php-api",
     "type": "library",
-    "license": "GNU General Public License 3.0",
+    "license": "GPL-3.0-only",
     "version": "1.0",
     "authors": [
         {
