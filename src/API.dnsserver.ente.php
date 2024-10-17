@@ -14,6 +14,7 @@ use Technitium\DNSServer\API\zones;
 use Technitium\DNSServer\API\Helper\DDNS;
 use Technitium\DNSServer\API\Helper\Log;
 use \Dotenv\Dotenv;
+use MirazMac\DotEnv\Writer;
 
 class API {
 
@@ -34,28 +35,54 @@ class API {
 
     private $log;
 
-    public function __construct($confPath = null){
+    private $conf;
+
+    private $path;
+
+    private $fullPath;
+
+    private $env = [];
+
+    public function __construct($confPath = null, $name = null){
         $this->loader();
-        $this->loadConf($confPath = null);
+        $this->loadConf($confPath, $name);
         $this->setProtocol();
     }
 
     public function setProtocol(){
-        if($_ENV["USE_HTTPS"] == "true"){
+        if($this->env["USE_HTTPS"] == "true"){
             $this->protocol = "https";
         } else {
             $this->protocol = "http";
         }
     }
 
-    public function loadConf($path = null){
+    public function loadConf($path = null, $name = null){
+        $this->conf = $name ?? ".env";
+        $this->path = $path ?? $_SERVER["DOCUMENT_ROOT"];
+        $this->fullPath = $this->path . "/" . $this->conf;
         if($path != null){
-            $env = \Dotenv\Dotenv::createImmutable($path);
-            $env->safeLoad();
+            $env = \Dotenv\Dotenv::createUnsafeMutable($this->path, $this->conf);
+            Log::error_rep("Using .env file: " . $this->path . "/" . $this->conf);
+            $env->load();
         } else {
-            $env = \Dotenv\Dotenv::createImmutable(dirname(__DIR__, 1));
-            $env->safeLoad();
+            $env = \Dotenv\Dotenv::createUnsafeMutable($this->path);
+            Log::error_rep("Using .env file: " . $this->path . "/.env");
+            $env->load();
         }
+        $env->required("API_URL");
+        $env->required("USERNAME");
+        $env->required("PASSWORD");
+        $this->env = [
+            "API_URL" => getenv("API_URL"),
+            "USERNAME" => getenv("USERNAME"),
+            "PASSWORD" => getenv("PASSWORD"),
+            "USE_HTTPS" => getenv("USE_HTTPS"),
+            "USE_POST" => @getenv("USE_POST"),
+            "INCLUDE_INFO" => getenv("INCLUDE_INFO"),
+            "TOKEN" => @getenv("TOKEN")
+        ];
+
     }
 
     public function loader(){
@@ -75,32 +102,38 @@ class API {
         require_once __DIR__ . "/helper/Log.Helper.API.dnsserver.ente.php";
     }
 
-    public function sendCall($data, $endpoint, $method = "POST"){
+    public function sendCall($data, $endpoint, $method = "POST", $skip = false){
         $c = curl_init();
         $endpoint = $this->prepareEndpoint($endpoint);
-        if($_ENV["USE_POST"]){
+        if($this->env["USE_POST"]){
             $method = "POST";
         }
         switch($method){
             case "POST":
-                curl_setopt($c, CURLOPT_URL, $endpoint . $this->appendAuth());
+                curl_setopt($c, CURLOPT_URL, $endpoint . $this->appendAuth($method,$skip));
                 curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($c, CURLOPT_POST, true);
                 curl_setopt($c, CURLOPT_POSTFIELDS, $data);
                 break;
             case "GET":
                 $data = http_build_query($data);
-                curl_setopt($c, CURLOPT_URL, $endpoint . "?" . $data . $this->appendAuth());
+                curl_setopt($c, CURLOPT_URL, $endpoint . "?" . $data . $this->appendAuth($method, $skip));
                 curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
                 break;
         }
-
-        $response = curl_exec($c);
-        if(!$response){
-            return curl_error($c);
+        try {
+            $response = curl_exec($c);
+            if(!$response){
+                Log::error_rep("Failed to send request: " . curl_error($c));
+                return ["status" => "error", "error" => curl_error($c)];
+            }
+        } catch (\Throwable $e){
+            Log::error_rep("Failed to send request: " . $e->getMessage());
+            return ["status" => "error", "error" => $e->getMessage()];
         }
         curl_close($c);
         if($this->checkResponse($response)){
+            Log::error_rep("Successfully accessed endpoint: " . $endpoint);
             return json_decode($response, true);
         }
         return [
@@ -108,15 +141,52 @@ class API {
         ];
     }
 
-    public function appendAuth($m = "POST"){
-        if($_ENV["TOKEN"] != ""){
+    public function appendAuth($m = "POST", $skip = false){
+        $this->loadConf($this->path, $this->conf);
+        if($skip){
+            return "";
+        }
+        if(!empty($this->env["TOKEN"])){
             switch($m){
                 case "POST":
-                    return "?token=" . $_ENV["TOKEN"] . "&user=" . $_ENV["USERNAME"] . "&password=" . $_ENV["PASSWORD"];
+                    return "?token=" . @$this->env["TOKEN"];
                 case "GET":
-                    return "&token=" . $_ENV["TOKEN"] . "&user=" . $_ENV["USERNAME"] . "&password=" . $_ENV["PASSWORD"];
-            }
+                    return "&token=" . @$this->env["TOKEN"];
+                }
+        } else {
+                $this->getPermanentToken();
+                $this->loadConf($this->path, $this->conf);
+                switch($m){
+                    case "POST":
+                        return "?token=" . @$this->env["TOKEN"];
+                    case "GET":
+                        return "&token=" . @$this->env["TOKEN"];
+                }
         }
+    }
+
+    public function getPermanentToken(){
+        Log::error_rep("Getting permanent token... | .env: " . $this->fullPath);
+        $response = $this->sendCall([
+            "user" => $this->env["USERNAME"],
+            "pass" => $this->env["PASSWORD"],
+            "tokenName" => "technitium-dnsserver-php-api"
+        ], "user/createToken", "POST", true);
+        $writer = new Writer($this->fullPath);
+        try {
+            $writer
+            ->set("TOKEN", $response["token"], true)
+            ->set("USERNAME", $this->env["USERNAME"], true)
+            ->set("PASSWORD", $this->env["PASSWORD"], true)
+            ->set("USE_HTTPS", $this->env["USE_HTTPS"], true)
+            ->set("API_URL", $this->env["API_URL"], true)
+            ->set("USE_POST", $this->env["USE_POST"], true)
+            ->set("INCLUDE_INFO", $this->env["INCLUDE_INFO"], true)
+            ->write(true);
+
+        } catch(\Throwable $e){
+            Log::error_rep("Unable to write to .env file: " . $this->fullPath);        }
+        return true;
     }
 
     public function checkResponse($response){
@@ -132,7 +202,7 @@ class API {
         $endpoints = json_decode(file_get_contents(__DIR__ . "/helper/endpoints.json"));
 
         if(in_array($endpoint, $endpoints)){
-            return $this->protocol . "://" . $_ENV["API_URL"] . "/api/" . $endpoint;
+            return $this->protocol . "://" . $this->env["API_URL"] . "/api/" . $endpoint;
         } else {
             return false;
         }

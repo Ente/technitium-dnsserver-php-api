@@ -60,8 +60,9 @@ class users {
      * @param string $username The username of the user to delete.
      * @return bool Returns `true` if the request was successful, `false` otherwise.
      */
-    public function deleteUser(string $username){
-        return $this->API->sendCall(["user" => $username], "admin/users/delete", "POST");
+    public function delete(string $username){
+        $response = $this->API->sendCall(["user" => $username], "admin/users/delete", "POST");
+        return $response["status"] == "ok";
     }
 
     /**

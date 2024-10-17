@@ -16,8 +16,12 @@ class users extends API {
     }
 
     public function eloader(){
-        require_once __DIR__ . "/Profile.users.php";
-        require_once __DIR__ . "/Session.users.php";
+        try {
+            require_once __DIR__ . "/Profile.users.php";
+            require_once __DIR__ . "/Session.users.php";
+        } catch (\Throwable $th) {
+             Helper\Log::error_rep("Failed to load required enpoint classes: " . $th->getMessage());
+        }
     }
 
 
@@ -27,19 +31,11 @@ class users extends API {
      * @return bool Returns `true` if password was changed successfully.
      */
     public function changePassword(string $newPassword){
-        $response = $this->sendCall(["pass" => $newPassword], "user/changePassword");
-        return $response["status"] == "ok";
-    }
-
-    /**
-     * `checkForUpdates()` - Check for updates.
-     * @return array|bool Returns an result array or `false` otherwise.
-     */
-    public function checkForUpdates($data){
-        $response = $this->sendCall($data, "cache/checkForUpdates");
-        if($response["status"] == "ok"){
-            return $response["response"];
-        } else {
+        try {
+            $response = $this->sendCall(["pass" => $newPassword], "user/changePassword");
+            return $response["status"] == "ok";
+        } catch (\Throwable $th) {
+            Helper\Log::error_rep("Failed to change password: " . $th->getMessage());
             return false;
         }
     }
@@ -49,10 +45,15 @@ class users extends API {
      * @return array|bool Returns a API token or `false` otherwise.
      */
     public function createToken(string $username, string $password, string $tokenName){
-        $response = $this->sendCall(["user" => $username, "pass" => $password, "tokenName" => $tokenName], "user/createToken");
-        if($response["status"] == "ok"){
-            return $response["response"];
-        } else {
+        try {
+            $response = $this->sendCall(["user" => $username, "pass" => $password, "tokenName" => $tokenName], "user/createToken");
+            if($response["status"] == "ok"){
+                return $response["response"];
+            } else {
+                return false;
+            }
+        } catch (\Throwable $th) {
+            Helper\Log::error_rep("Failed to create token: " . $th->getMessage());
             return false;
         }
     }
@@ -62,10 +63,15 @@ class users extends API {
      * @return array|bool Returns relevant information and the token.
      */
     public function login(string $username, string $password){
-        $response = $this->sendCall(["user" => $username, "pass" => $password, "includeInfo" => "true"], "user/login");
-        if($response["status"] == "ok"){
-            return $response["response"];
-        } else {
+        try {
+            $response = $this->API->sendCall(["user" => $username, "pass" => $password, "includeInfo" => "true"], "user/login");
+            if($response["status"] == "ok"){
+                return $response;
+            } else {
+                return false;
+            }
+        } catch (\Throwable $th) {
+            Helper\Log::error_rep("Failed to login: " . $th->getMessage(), $th->getTraceAsString());
             return false;
         }
     }
@@ -75,8 +81,13 @@ class users extends API {
      * @return array|bool Returns relevant information and the token.
      */
     public function logout(){
-        $response = $this->sendCall([], "users/logout");
-        return $response["status"] == "ok";
+        try {
+            $response = $this->sendCall([], "users/logout");
+            return $response["status"] == "ok";
+        } catch (\Throwable $th) {
+            Helper\Log::error_rep("Failed to logout: " . $th->getMessage());
+            return false;
+        }
     }
 
     public function profile(): profile {

@@ -1,11 +1,11 @@
 [
-    "users/login",
-    "users/logout",
-    "users/createToken",
-    "users/changePassword",
-    "users/checkForUpdate",
+    "user/login",
+    "user/logout",
+    "user/createToken",
+    "user/changePassword",
 
     "users/session/delete",
+    "users/session/get",
 
     "users/profile/get",
     "users/profile/set",
@@ -46,6 +46,8 @@
     "zones/dnssec/properties/publishAllPrivateKeys",
     "zones/dnssec/properties/rolloverDnsKey",
     "zones/dnssec/properties/retireDnsKey",
+    "zones/dnssec/properties/updateDnsKey",
+    "zones/dnssec/properties/deletePrivateKey",
     
     "zones/records/add",
     "zones/records/get",

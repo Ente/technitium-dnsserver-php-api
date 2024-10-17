@@ -17,9 +17,9 @@ Then: `require_once "/path/to/API.dnsserver.ente.php";` & `use Technitium\DNSSer
 - `USERNAME`: The username for the user account. (You should create a dedicated one)
 - `PASSWORD`: The password for the user account.
 - `INCLUDE_INFO`: Returns basic information that might be relevant for the queried request.
-- `TOKEN`: Your API token, if already existent. (`[Your Username]` > `[Create API Token]`)
+- `TOKEN`: Your API token, if already existent. (`[Your Username]` > `[Create API Token]`). If left empty, the API will use the username and password for authentication to create an API token for you and will write it to your `.env`.
 - `USE_POST`: Specify if you want to access the API via POST (`true`) instead of GET (`false`) in default.
-- `USE_HTTPS`: Enable (`true`) HTTPS for the API connection.
+- `USE_HTTPS`: Enable (`true`) HTTPS for the API connection. If your server does not support HTTPS, the API will simply return `false` to all requests.
 
 ## General Usage
 
@@ -96,12 +96,19 @@ use Technitium\DNSServer\API;
 use Technitium\DNSServer\API\Helper\DDNS;
 
 DDNS(new API(), file_get_contents("/my/config.json"));
-DDNS(new API(), file_get_contents("/my/config2.json"));
-DDNS(new API("/my/.env"), file_get_contents("/my/config3.json"));
+DDNS(new API(__DIR__), file_get_contents("/my/config2.json"));
+DDNS(new API(__DIR__ . "/configurations", ".env-custom"), file_get_contents("/my/config3.json"));
 
 ```
 
 ## Changes
+
+### v1.1: Fixes
+
+- `TOKEN` can now be empty
+- Fixed some endpoints not working
+- Fixed issues preventing loading different environments
+- Exception handling
 
 ### v1.0: Initial Release
 

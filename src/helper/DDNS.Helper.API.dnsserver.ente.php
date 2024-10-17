@@ -30,7 +30,12 @@ class DDNS {
     }
 
     private function processRecord($record, $domain) {
-        $allrecords = $this->API->zones()->records()->get($record)["records"];
+        try {
+            $allrecords = $this->API->zones()->records()->get($record)["records"];
+        } catch (\Throwable $th) {
+            Log::error_rep("Failed to get records for domain {$record}!");
+            return;
+        }
         $currentIP = $this->getPublicIP();
         $recordFound = false;
 

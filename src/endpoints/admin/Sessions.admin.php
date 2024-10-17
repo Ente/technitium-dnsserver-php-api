@@ -26,12 +26,12 @@ class sessions {
     }
 
     /**
-     * `deleteSession()` - Deletes a session token.
+     * `delete()` - Deletes a session token.
      * - `PERMISSIONS`: `Administration:Modify`
      * @param string $partialToken The partial token to delete (Can be obtained from `list()`).
      * @return bool Returns `true` if the request was successful, `false` otherwise.
      */
-    public function deleteSession(string $partialToken){
+    public function delete(string $partialToken){
         $response = $this->API->sendCall(["partialToken" => $partialToken], "admin/sessions/delete", "POST");
         return $response["status"] == "ok";
     }
