@@ -12,7 +12,7 @@ class apps extends API {
         $this->eloader();
     }
 
-    public function eloader(){
+    private function eloader(){
         require_once __DIR__ . "/Config.apps.php";
     }
 

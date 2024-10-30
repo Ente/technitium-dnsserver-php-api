@@ -9,9 +9,10 @@ class dashboard extends API {
 
     public function __construct($api){
         $this->API = $api;
+        $this->eloader();
     }
 
-    public function eloader(){
+    private function eloader(){
         require_once __DIR__ . "/Stats.dashboard.php";
     }
 

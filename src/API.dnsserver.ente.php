@@ -49,7 +49,7 @@ class API {
         $this->setProtocol();
     }
 
-    public function setProtocol(){
+    private function setProtocol(){
         if($this->env["USE_HTTPS"] == "true"){
             $this->protocol = "https";
         } else {
@@ -57,7 +57,7 @@ class API {
         }
     }
 
-    public function loadConf($path = null, $name = null){
+    private function loadConf($path = null, $name = null){
         $this->conf = $name ?? ".env";
         $this->path = $path ?? $_SERVER["DOCUMENT_ROOT"];
         $this->fullPath = $this->path . "/" . $this->conf;
@@ -102,9 +102,9 @@ class API {
         require_once __DIR__ . "/helper/Log.Helper.API.dnsserver.ente.php";
     }
 
-    public function sendCall($data, $endpoint, $method = "POST", $skip = false){
+    public function sendCall($data, $endpoint, $method = "POST", $skip = false, $bypass = false){
         $c = curl_init();
-        $endpoint = $this->prepareEndpoint($endpoint);
+        $endpoint = $this->prepareEndpoint($endpoint, $bypass);
         if($this->env["USE_POST"]){
             $method = "POST";
         }
@@ -116,6 +116,11 @@ class API {
                 curl_setopt($c, CURLOPT_POSTFIELDS, $data);
                 break;
             case "GET":
+                $data = http_build_query($data);
+                curl_setopt($c, CURLOPT_URL, $endpoint . "?" . $data . $this->appendAuth($method, $skip));
+                curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+                break;
+            default:
                 $data = http_build_query($data);
                 curl_setopt($c, CURLOPT_URL, $endpoint . "?" . $data . $this->appendAuth($method, $skip));
                 curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
@@ -141,7 +146,7 @@ class API {
         ];
     }
 
-    public function appendAuth($m = "POST", $skip = false){
+    private function appendAuth($m = "POST", $skip = false){
         $this->loadConf($this->path, $this->conf);
         if($skip){
             return "";
@@ -165,7 +170,7 @@ class API {
         }
     }
 
-    public function getPermanentToken(){
+    private function getPermanentToken(){
         Log::error_rep("Getting permanent token... | .env: " . $this->fullPath);
         $response = $this->sendCall([
             "user" => $this->env["USERNAME"],
@@ -189,7 +194,7 @@ class API {
         return true;
     }
 
-    public function checkResponse($response){
+    private function checkResponse($response){
         if(is_null($response)){
             return false;
         } else {
@@ -198,7 +203,10 @@ class API {
         }
     }
 
-    public function prepareEndpoint($endpoint){
+    private function prepareEndpoint($endpoint, $bypass = false){
+        if($bypass){
+            return $this->protocol . "://" . $this->env["API_URL"] . "/api/" . $endpoint;
+        }
         $endpoints = json_decode(file_get_contents(__DIR__ . "/helper/endpoints.json"));
 
         if(in_array($endpoint, $endpoints)){

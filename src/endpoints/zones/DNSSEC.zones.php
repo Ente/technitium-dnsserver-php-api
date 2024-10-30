@@ -12,7 +12,7 @@ class dnssec {
         $this->eloader();
     }
 
-    public function eloader(){
+    private function eloader(){
         require_once __DIR__ . "/Properties.dnssec.zones.php";
     }
 

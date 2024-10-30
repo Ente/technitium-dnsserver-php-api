@@ -24,7 +24,7 @@ class zones extends API {
         $this->eloader();
     }
 
-    public function eloader(){
+    private function eloader(){
         require_once __DIR__ . "/Catalogs.zones.php";
         require_once __DIR__ . "/DNSSEC.zones.php";
         require_once __DIR__ . "/Permissions.zones.php";

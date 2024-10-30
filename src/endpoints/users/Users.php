@@ -15,7 +15,7 @@ class users extends API {
         $this->eloader();
     }
 
-    public function eloader(){
+    private function eloader(){
         try {
             require_once __DIR__ . "/Profile.users.php";
             require_once __DIR__ . "/Session.users.php";

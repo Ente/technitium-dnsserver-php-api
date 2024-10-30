@@ -4,10 +4,15 @@ This API client is intended to be used with Technitiums DNS Server
 
 ## Installation
 
-Via Git: `git clone https://github.com/ente/technitium-dnsserver-php-api.git` or `composer require ente/technitium-dnsserver-php-api`
+### Via Git
 
+Run `git clone https://github.com/ente/technitium-dnsserver-php-api.git` where ever you want the library to be located.
+Then `require_once "/path/to/API.dnsserver.ente.php";` & `use Technitium\DNSServer\API\API;` in your PHP file.
+
+### Via Composer
+
+Run `composer require ente/technitium-dnsserver-php-api`
 Then: `require_once "/path/to/vendor/autoload.php";` & `use Technitium\DNSServer\API\API;`
-Then: `require_once "/path/to/API.dnsserver.ente.php";` & `use Technitium\DNSServer\API\API;`
 
 ## Configuration
 
@@ -102,6 +107,13 @@ DDNS(new API(__DIR__ . "/configurations", ".env-custom"), file_get_contents("/my
 ```
 
 ## Changes
+
+### v1.1.1: Fixes
+
+- Small changes to the `README.md`
+- Added code documentation within the classes
+- Implemented the `<bool>$bypass` parameter to the sendCall function to bypass the `prepareEndpoint` function therefore allowing to send to custom endpoints
+- Adjusted class functions scope
 
 ### v1.1: Fixes
 

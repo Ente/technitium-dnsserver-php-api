@@ -2,20 +2,36 @@
 namespace Technitium\DNSSERVER\API\Helper;
 
 class Log extends \Exception {
+
+    /**
+     * Log constructor.
+     * @param string $message The exception message
+     * @param int $code The exception code
+     * @param \Exception|null $previous A reference to the previous exception
+     */
     public function __construct($message, $code = 0, \Exception $previous = null){
-        $this->error_rep($message);
+        $trace = $this->getTraceAsString() ?? "N/A";
+        $this->error_rep(message: $message, method: $trace);
         parent::__construct($message, $code, $previous);
     }
 
+    /**
+     * @return string
+     */
     public function __toString(): string {
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
 
-    public static function error_rep($message, $method = NULL){
+    /**
+     * `error_rep()` function is used to log the error message to the error log file.
+     * @param string $message The error message to be logged.
+     * @param string $method Name of either the method name that called the function or the request method.
+     */
+    public static function error_rep($message, $method = null){
         $error_file = self::logrotate(); // file on your fs, e.g. /var/www/html/error.log
         $version = @file_get_contents($_SERVER["DOCUMENT_ROOT"] . "/VERSION") ?? "N/A"; //optional value
-        if($method == NULL){
-            $method = $_SERVER["REQUEST_METHOD"];
+        if($method == null){
+            $method = @$_SERVER["REQUEST_METHOD"];
         }
         $addr = @$_SERVER["SERVER_ADDR"] ?? "N/A";
         $rhost = @$_SERVER["REMOTE_HOST"] ?? "N/A";
@@ -24,7 +40,12 @@ class Log extends \Exception {
     
     }
 
-    public static function getSpecificLogFilePath($date = null){
+    /**
+     * `getSpecificLogFilePath()` function is used to get the specific log file path.
+     * @param string|null $date The date to get the log file path for. Format: "Y-m-d".
+     * @return string The specific log file path.
+     */
+    private static function getSpecificLogFilePath($date = null){
         if($date == null){
             $date = date("Y-m-d");
             return __DIR__ . "/data/logs/log-{$date}.log";
@@ -38,7 +59,11 @@ class Log extends \Exception {
         }
     }
 
-    public static function logrotate(){
+    /**
+     * `logrotate()` function is used to rotate the log file.
+     * @return string The path to the log file.
+     */
+    private static function logrotate(){
         $logpath = __DIR__ . "/data/logs/";
         $date = date("Y-m-d");
         $lastrotate = @file_get_contents(__DIR__ . "/data/logs/logrotate-cache.txt");
