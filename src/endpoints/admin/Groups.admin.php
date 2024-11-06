@@ -3,7 +3,7 @@ namespace Technitium\DNSServer\API\admin;
 
 /**
  * Groups class
- * 
+ *
  * This class is used to interact with the groups endpoint of the Technitium DNS Server API
  */
 class groups {

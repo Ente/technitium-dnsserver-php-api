@@ -81,11 +81,21 @@ class scopes {
         return $response["status"] == "ok";
     }
 
+    /**
+     * `disable()` - Disables the DHCP scope.
+     * @param string $name The name of the scope.
+     * @return bool Returns `true` if the request was successful, `false` otherwise.
+     */
     public function disable(string $name){
         $response = $this->API->sendCall(["name" => $name], "dhcp/scopes/disable");
         return $response["status"] == "ok";
     }
 
+    /**
+     * `delete()` - Deletes the DHCP scope.
+     * @param string $name The name of the scope.
+     * @return bool Returns `true` if the request was successful, `false` otherwise.
+     */
     public function delete(string $name){
         $response = $this->API->sendCall(["name" => $name], "dhcp/scopes/delete");
         return $response["status"] == "ok";

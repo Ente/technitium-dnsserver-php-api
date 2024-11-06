@@ -11,7 +11,7 @@ class config {
     /**
      * `get()` - Returns the configuration of an app.
      * @param string $name The name of the app.
-     * @return array|bool Returns the result array or `false` if the group was not found. 
+     * @return array|bool Returns the result array or `false` if the group was not found.
      */
     public function get(string $name){
         $response = $this->API->sendCall(["name" => $name], "apps/config/get");

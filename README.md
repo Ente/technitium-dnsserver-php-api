@@ -1,6 +1,7 @@
 # technitium-dnsserver-php-api
 
 This API client is intended to be used with Technitiums DNS Server
+For the full Technitium API Documentation please visit [Technitium API Documentation](https://github.com/TechnitiumSoftware/DnsServer/blob/master/APIDOCS.md)
 
 ## Installation
 
@@ -52,6 +53,20 @@ $sampleApp = $api->apps()->listStoreApps()["storeApps"][0];
 if($api->apps->downloadAndInstall($sampleApp["name"], $sampleApp["url"])) {
     echo "App installed successfully!";
 }
+
+```
+
+### Send to custom endpoint
+
+```php
+<?php
+
+require_once "/vendor/autoload.php";
+use Technitium\DNSServer\API;
+
+$api = new API();
+// You have to set <bool>$bypass to true to use this feature
+echo var_dump($api->sendCall(data: array("field" => "value"), endpoint: "admin/users/list", skip: false, bypass: true))
 
 ```
 
@@ -107,6 +122,12 @@ DDNS(new API(__DIR__ . "/configurations", ".env-custom"), file_get_contents("/my
 ```
 
 ## Changes
+
+### v1.1.2: Quality
+
+- Added more documentation to the classes
+- Small code changes
+<!-- Removed whitespaces -->
 
 ### v1.1.1: Fixes
 

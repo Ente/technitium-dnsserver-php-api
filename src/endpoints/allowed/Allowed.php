@@ -11,7 +11,7 @@ class allowed extends API {
      * `list()` - Returns a list of all allowed domains.
      * @param string $domain The domain to list.
      * @param string $direction The direction to list the domains. Valid values are [`up`, `down`].
-     * @return array|bool Returns the result array or `false` if the group was not found. 
+     * @return array|bool Returns the result array or `false` if the group was not found.
      */
     public function list(string $domain = "", string $direction = "up"){
         $response = $this->API->sendCall(["domain" => $domain, "direction" => $direction], "allowed/list");

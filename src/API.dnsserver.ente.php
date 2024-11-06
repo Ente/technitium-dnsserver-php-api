@@ -19,7 +19,6 @@ use MirazMac\DotEnv\Writer;
 class API {
 
     private $protocol;
-
     private $admin;
     private $allowed;
     private $apps;
@@ -32,16 +31,13 @@ class API {
     private $users;
     private $zones;
     private $ddns;
-
     private $log;
-
     private $conf;
-
     private $path;
-
     private $fullPath;
-
     private $env = [];
+    const PREFIX_GET = "&token=";
+    const PREFIX_POST = "?token=";
 
     public function __construct($confPath = null, $name = null){
         $this->loader();
@@ -57,6 +53,12 @@ class API {
         }
     }
 
+    /**
+     * `loadConf()` - Load the .env file and set the environment variables.
+     * @param mixed $path The full path to the directory containing the .env file. (optional)
+     * @param mixed $name The name of the .env file. (optional)
+     * @return void
+     */
     private function loadConf($path = null, $name = null){
         $this->conf = $name ?? ".env";
         $this->path = $path ?? $_SERVER["DOCUMENT_ROOT"];
@@ -102,6 +104,15 @@ class API {
         require_once __DIR__ . "/helper/Log.Helper.API.dnsserver.ente.php";
     }
 
+    /**
+     * `sendCall()` - Send a request to the Technitium API.
+     * @param array $data The data to send to the API
+     * @param string $endpoint The endpoint to send the data to, e.g. "admin/users/list"
+     * @param mixed $method The HTTP method to use. Default is "POST".
+     * @param mixed $skip Set to `true` to skip the authentication URI append.
+     * @param mixed $bypass Set to `true` to bypass the endpoint check allowing to access not (yet) implemented methods.
+     * @return array Returns the response from the API or an error (["status" => "error"]) as an array.
+     */
     public function sendCall($data, $endpoint, $method = "POST", $skip = false, $bypass = false){
         $c = curl_init();
         $endpoint = $this->prepareEndpoint($endpoint, $bypass);
@@ -126,50 +137,72 @@ class API {
                 curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
                 break;
         }
+        $result = ["status" => "error", "error" => "Unknown error"];
         try {
             $response = curl_exec($c);
             if(!$response){
                 Log::error_rep("Failed to send request: " . curl_error($c));
-                return ["status" => "error", "error" => curl_error($c)];
+                $result = ["status" => "error", "error" => curl_error($c)];
             }
         } catch (\Throwable $e){
             Log::error_rep("Failed to send request: " . $e->getMessage());
-            return ["status" => "error", "error" => $e->getMessage()];
+            $result = ["status" => "error", "error" => $e->getMessage()];
         }
         curl_close($c);
         if($this->checkResponse($response)){
             Log::error_rep("Successfully accessed endpoint: " . $endpoint);
-            return json_decode($response, true);
+            $result = json_decode($response, true);
         }
-        return [
-            "error" => "An error occurred",
-        ];
+        return $result;
     }
 
+    /**
+     * `appendAuth()` - Append the authentication token to the URI.
+     * @param mixed $m The HTTP method to use. Default is "POST".
+     * @param mixed $skip Set to `true` to skip the authentication URI append, allowing the use of `API::getPermanentToken()`.
+     * @return string Returns the authentication token URI string or an empty string.
+     */
     private function appendAuth($m = "POST", $skip = false){
         $this->loadConf($this->path, $this->conf);
+        $authAppend = null;
         if($skip){
             return "";
         }
         if(!empty($this->env["TOKEN"])){
             switch($m){
                 case "POST":
-                    return "?token=" . @$this->env["TOKEN"];
+                    $authAppend = $this::PREFIX_POST . @$this->env["TOKEN"];
+                    break;
                 case "GET":
-                    return "&token=" . @$this->env["TOKEN"];
+                    $authAppend = $this::PREFIX_GET . @$this->env["TOKEN"];
+                    break;
+                default:
+                    $authAppend = $this::PREFIX_POST . @$this->env["TOKEN"];
+                    break;
                 }
         } else {
                 $this->getPermanentToken();
                 $this->loadConf($this->path, $this->conf);
                 switch($m){
                     case "POST":
-                        return "?token=" . @$this->env["TOKEN"];
+                        $authAppend = $this::PREFIX_POST . @$this->env["TOKEN"];
+                        break;
                     case "GET":
-                        return "&token=" . @$this->env["TOKEN"];
+                        $authAppend = $this::PREFIX_GET . @$this->env["TOKEN"];
+                        break;
+                    default:
+                        $authAppend = $this::PREFIX_POST . @$this->env["TOKEN"];
+                        break;
                 }
         }
+        return $authAppend;
     }
 
+    /**
+     * `getPermanentToken()` - Get a permanent token from the Technitium API.
+     * This function is called when the token is not found in the .env file.
+     * @return bool Returns `true` if the token was successfully written to the .env file.
+     */
     private function getPermanentToken(){
         Log::error_rep("Getting permanent token... | .env: " . $this->fullPath);
         $response = $this->sendCall([
@@ -190,11 +223,18 @@ class API {
             ->write(true);
 
         } catch(\Throwable $e){
-            Log::error_rep("Unable to write to .env file: " . $this->fullPath);        }
+            Log::error_rep("Unable to write to .env file: " . $this->fullPath);
+        }
         return true;
     }
 
-    private function checkResponse($response){
+    /**
+     * `checkResponse()` - Check if the Technitium API response is valid.
+     * If the response status contains either "error" or "invalid-token" it is considered invalid.
+     * @param mixed $response The response returned by `API::sendCall()` function.
+     * @return bool Returns `true` if the response is valid, otherwise `false`.
+     */
+    private function checkResponse(string $response){
         if(is_null($response)){
             return false;
         } else {
@@ -203,6 +243,12 @@ class API {
         }
     }
 
+    /**
+     * `prepareEndpoint()` - Generates the API URI for the endpoint in question.
+     * @param mixed $endpoint The endpoint to generate the URI for.
+     * @param mixed $bypass Set to `true` to bypass the endpoint check allowing to access not (yet) implemented methods.
+     * @return bool|string Returns the URI as string or `false` if the endpoint is not implemented.
+     */
     private function prepareEndpoint($endpoint, $bypass = false){
         if($bypass){
             return $this->protocol . "://" . $this->env["API_URL"] . "/api/" . $endpoint;
@@ -280,7 +326,7 @@ class API {
     }
 
     public function log(): Log {
-        if(!$this->log) $this->log = new Log($this);
+        if(!$this->log) $this->log = new Log(null);
         return $this->log;
     }
 }
