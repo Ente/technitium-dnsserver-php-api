@@ -29,14 +29,19 @@ class Log extends \Exception {
      */
     public static function error_rep($message, $method = null){
         $error_file = self::logrotate(); // file on your fs, e.g. /var/www/html/error.log
-        $version = @file_get_contents($_SERVER["DOCUMENT_ROOT"] . "/VERSION") ?? "N/A"; //optional value
+        $version = NULL;
         if($method == null){
             $method = @$_SERVER["REQUEST_METHOD"];
         }
+        $uri = @$_SERVER["REQUEST_URI"];
+        $host = @$_SERVER["HTTP_HOST"];
+        $port = @$_SERVER["SERVER_PORT"];
+        $script = @$_SERVER["SCRIPT_FILENAME"];
+        $name = @$_SERVER["SERVER_NAME"] ?? "N/A";
         $addr = @$_SERVER["SERVER_ADDR"] ?? "N/A";
         $rhost = @$_SERVER["REMOTE_HOST"] ?? "N/A";
         $time = date("[d.m.Y | H:i:s]");
-        error_log("{$time} \"{$message}\"\nURL: {$_SERVER["HTTP_HOST"]}{$_SERVER["REQUEST_URI"]} \nVersion: {$version} Server IP:{$addr} - Server Name: {$_SERVER["SERVER_NAME"]} - Request Method: '{$method}'\nRemote Addresse: {$_SERVER["REMOTE_ADDR"]} - Remote Name: '{$rhost}' - Remote Port: {$_SERVER["REMOTE_PORT"]}\nScript Name: '{$_SERVER["SCRIPT_FILENAME"]}'\n=======================\n", 3, $error_file);
+        error_log("{$time} \"{$message}\"\nURL: {$host}{$uri} \nVersion: {$version} Server IP:{$addr} - Server Name: {$name} - Request Method: '{$method}'\nRemote Addresse: {$addr} - Remote Name: '{$rhost}' - Remote Port: {$port}\nScript Name: '{$script}'\n=======================\n", 3, $error_file);
     
     }
 

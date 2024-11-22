@@ -33,7 +33,7 @@ Then: `require_once "/path/to/vendor/autoload.php";` & `use Technitium\DNSServer
 require_once "/vendor/autoload.php";
 use Technitium\DNSServer\API;
 
-$api = new API();
+$api = new API("path/to/env", "env-name");
 
 // Get all zones
 $zones = $api->zones()->get();
@@ -64,7 +64,7 @@ if($api->apps->downloadAndInstall($sampleApp["name"], $sampleApp["url"])) {
 require_once "/vendor/autoload.php";
 use Technitium\DNSServer\API;
 
-$api = new API();
+$api = new API("path/to/env", "env-name");
 // You have to set <bool>$bypass to true to use this feature
 echo var_dump($api->sendCall(data: array("field" => "value"), endpoint: "admin/users/list", skip: false, bypass: true))
 
@@ -87,7 +87,7 @@ $ddns->updateRecords($path_to_configJSON);
 
 // OR
 
-$ddns_result = new DDNS(new API(), file_get_contents($path_to_configJSON)); // starts automatically updating the records
+$ddns_result = new DDNS(new API("path/to/env"), file_get_contents($path_to_configJSON)); // starts automatically updating the records
 
 // OR
 $api = new API();
@@ -115,13 +115,18 @@ require_once "/vendor/autoload.php";
 use Technitium\DNSServer\API;
 use Technitium\DNSServer\API\Helper\DDNS;
 
-DDNS(new API(), file_get_contents("/my/config.json"));
+DDNS(new API("path/to/env"), file_get_contents("/my/config.json"));
 DDNS(new API(__DIR__), file_get_contents("/my/config2.json"));
 DDNS(new API(__DIR__ . "/configurations", ".env-custom"), file_get_contents("/my/config3.json"));
 
 ```
 
 ## Changes
+
+### v1.1.3: Shell safe
+
+- Library is now shell safe (you are now required to specify the path to the `.env` file)
+- Silenced most $_SERVER['argv'] warnings when running the library in shell
 
 ### v1.1.2: Quality
 

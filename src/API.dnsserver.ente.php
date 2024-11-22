@@ -39,7 +39,7 @@ class API {
     const PREFIX_GET = "&token=";
     const PREFIX_POST = "?token=";
 
-    public function __construct($confPath = null, $name = null){
+    public function __construct($confPath, $name = null){
         $this->loader();
         $this->loadConf($confPath, $name);
         $this->setProtocol();
@@ -59,8 +59,11 @@ class API {
      * @param mixed $name The name of the .env file. (optional)
      * @return void
      */
-    private function loadConf($path = null, $name = null){
+    private function loadConf($path, $name = null){
         $this->conf = $name ?? ".env";
+        if(!isset($_SERVER)){
+            $path = __DIR__;
+        }
         $this->path = $path ?? $_SERVER["DOCUMENT_ROOT"];
         $this->fullPath = $this->path . "/" . $this->conf;
         if($path != null){
