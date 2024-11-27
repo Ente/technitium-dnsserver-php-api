@@ -125,6 +125,10 @@ DDNS(new API(__DIR__ . "/configurations", ".env-custom"), file_get_contents("/my
 
 ## Changes
 
+### v1.1.4: Type safety
+
+- Added type safety to the `DDNS.Helper.API.dnsserver.ente.php` class
+
 ### v1.1.3: Shell safe
 
 - Library is now shell safe (you are now required to specify the path to the `.env` file)

@@ -4,9 +4,9 @@ namespace Technitium\DNSServer\API\Helper;
 use Technitium\DNSServer\API\Helper\Log;
 
 class DDNS {
-    private $API;
+    private \Technitium\DNSServer\API\API $API;
 
-    public function __construct($api, $configFile = null){
+    public function __construct(\Technitium\DNSServer\API\API $api, string $configFile = null){
         $this->API = $api;
         if ($configFile != null) {
             $this->updateRecords($configFile);
@@ -15,10 +15,10 @@ class DDNS {
 
     /**
      * `getPublicIP()` function is used to get the public IP address of the server.
-     * @param mixed $uri The URI to get the public IP address from. Currently, it is set to "https://ipecho.net/plain".
+     * @param string $uri The URI to get the public IP address from. Currently, it is set to "https://ipecho.net/plain".
      * @return string The public IP address of the server.
      */
-    public function getPublicIP($uri = "https://ipecho.net/plain") {
+    public function getPublicIP(string $uri = "https://ipecho.net/plain") {
         return trim(file_get_contents($uri));
     }
 
@@ -41,11 +41,11 @@ class DDNS {
 
     /**
      * `processRecord()` function is used to process the record.
-     * @param mixed $record The record to be processed.
-     * @param mixed $domain The domain the record belongs to.
+     * @param string $record The record to be processed.
+     * @param string $domain The domain the record belongs to.
      * @return void Either adds or updates the record.
      */
-    private function processRecord($record, $domain) {
+    private function processRecord(string $record, string $domain) {
         try {
             $allrecords = $this->API->zones()->records()->get($record)["records"];
         } catch (\Throwable $th) {
@@ -77,12 +77,12 @@ class DDNS {
 
     /**
      * `updateRecord()` function is used to update the record.
-     * @param mixed $record The record to be updated.
-     * @param mixed $domain The domain the record belongs to.
-     * @param mixed $newIP The new IP address to be used.
+     * @param string $record The record to be updated.
+     * @param string $domain The domain the record belongs to.
+     * @param string $newIP The new IP address to be used.
      * @return void Updates the record.
      */
-    private function updateRecord($record, $domain, $newIP) {
+    private function updateRecord(string $record, string $domain, string $newIP) {
         if (!$this->API->zones()->records()->update([
             "domain" => $record,
             "type" => "A",
@@ -97,12 +97,12 @@ class DDNS {
 
     /**
      * `addRecord()` function is used to add the record.
-     * @param mixed $record The record to be added.
-     * @param mixed $domain The domain the record belongs to.
-     * @param mixed $ipAddress The IP address to be used.
+     * @param string $record The record to be added.
+     * @param string $domain The domain the record belongs to.
+     * @param string $ipAddress The IP address to be used.
      * @return void Adds the record.
      */
-    private function addRecord($record, $domain, $ipAddress) {
+    private function addRecord(string $record, string $domain, string $ipAddress) {
         if (!$this->API->zones()->records()->add([
             "domain" => $record,
             "type" => "A",
