@@ -8,11 +8,13 @@ For the full Technitium API Documentation please visit [Technitium API Documenta
 ### Via Git
 
 Run `git clone https://github.com/ente/technitium-dnsserver-php-api.git` where ever you want the library to be located.
+
 Then `require_once "/path/to/API.dnsserver.ente.php";` & `use Technitium\DNSServer\API\API;` in your PHP file.
 
 ### Via Composer
 
 Run `composer require ente/technitium-dnsserver-php-api`
+
 Then: `require_once "/path/to/vendor/autoload.php";` & `use Technitium\DNSServer\API\API;`
 
 ## Configuration
@@ -38,7 +40,7 @@ $api = new API("path/to/env", "env-name");
 // Get all zones
 $zones = $api->zones()->get();
 // Get all zone records
-$records = $api->zones->records()->get("example.com");
+$records = $api->zones()->records()->get("example.com");
 
 // Install an app
 
