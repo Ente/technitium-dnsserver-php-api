@@ -128,6 +128,8 @@ DDNS(new API(__DIR__ . "/configurations", ".env-custom"), file_get_contents("/my
 ### v1.1.4: Type safety
 
 - Added type safety to the `DDNS.Helper.API.dnsserver.ente.php` class
+- Added type safety to all other classes
+- Fixed incorrect/Added API docs
 
 ### v1.1.3: Shell safe
 

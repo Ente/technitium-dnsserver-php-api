@@ -4,7 +4,7 @@ namespace Technitium\DNSServer\API\zones;
 class options {
     public $API;
 
-    public function __construct($api){
+    public function __construct(\Technitium\DNSServer\API\API $api){
         $this->API = $api;
     }
 
@@ -15,7 +15,7 @@ class options {
      * @param bool $includeAvailableTsigKeyNames Include available TSIG key names.
      * @return array|bool Returns an result array or `false` otherwise.
      */
-    public function get(string $zone, bool $includeAvailableCatalogZoneNames = true, bool $includeAvailableTsigKeyNames = false){
+    public function get(string $zone, bool $includeAvailableCatalogZoneNames = true, bool $includeAvailableTsigKeyNames = false): array|bool{
         if($includeAvailableCatalogZoneNames){
             $includeAvailableCatalogZoneNames = "true";
         } else {
@@ -63,7 +63,7 @@ class options {
      * - `updateSecurityPolicies` (optional): A pipe `|` separated table data of security policies with each row containing the TSIG keys name, domain name, and comma separated record types that are allowed. Use wildcard domain name to specify all sub domain names. Set this option to `false` to clear all security policies and stop TSIG authentication. This option is valid only for `Primary` and `Forwarder` zones.
      * @return bool Returns `true` if successful, `false` otherwise.
      */
-    public function set(array $data){
+    public function set(array $data): bool{
         $response = $this->API->sendCall($data, "zones/options/set");
         return $response["status"] == "ok";
     }

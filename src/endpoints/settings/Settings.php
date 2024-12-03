@@ -4,7 +4,7 @@ namespace Technitium\DNSServer\API;
 class settings extends API {
     public $API;
 
-    public function __construct($api){
+    public function __construct(\Technitium\DNSServer\API\API $api){
         $this->API = $api;
     }
 
@@ -16,7 +16,7 @@ class settings extends API {
      * `forceUpdateBlockLists()` - Forces an update of the block lists.
      * @return array|bool Returns the response from the server or `false` if the request failed.
      */
-    public function forceUpdateBlockLists(){
+    public function forceUpdateBlockLists(): array|bool{
         $response = $this->API->sendCall([], "settings/forceUpdateBlockLists");
         if($response["status"] == "ok"){
             return $response["response"];
@@ -29,7 +29,7 @@ class settings extends API {
      * `get()` - Returns the DNS server settings.
      * @return array|bool Returns the DNS server settings or `false` if the request failed.
      */
-    public function get(){
+    public function get(): array|bool{
         $response = $this->API->sendCall([], "settings/get");
         if($response["status"] == "ok"){
             return $response["response"];
@@ -44,7 +44,7 @@ class settings extends API {
      * @return array|bool Returns the DNS server settings or `false` if the request failed.
      * @link https://github.com/TechnitiumSoftware/DnsServer/blob/master/APIDOCS.md
      */
-    public function set($data){
+    public function set(array $data): array|bool{
         $response = $this->API->sendCall($data, "settings/set");
         if($response["status"] == "ok"){
             return $response["response"];
@@ -57,7 +57,7 @@ class settings extends API {
      * `getTsigKeyNames()` - Returns the list of TSIG keys.
      * @return array|bool Returns the list of TSIG keys or `false` if the request failed.
      */
-    public function getTsigKeyNames(){
+    public function getTsigKeyNames(): array|bool{
         $response = $this->API->sendCall([], "settings/getTsigKeyNames");
         if($response["status"] == "ok"){
             return $response["response"];
@@ -75,7 +75,7 @@ class settings extends API {
      * @param int $minutes The number of minutes to disable blocking for.
      * @return bool Returns `true` if the request was successful.
      */
-    public function temporaryDisableBlocking(int $minutes){
+    public function temporaryDisableBlocking(int $minutes): array|bool{
         return $this->API->sendCall(["minutes" => $minutes], "settings/temporaryDisableBlocking");
     }
 }

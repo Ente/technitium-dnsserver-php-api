@@ -10,12 +10,12 @@ class users extends API {
 
     private $session;
 
-    public function __construct($api){
+    public function __construct(\Technitium\DNSServer\API\API $api){
         $this->API = $api;
         $this->eloader();
     }
 
-    private function eloader(){
+    private function eloader(): void{
         try {
             require_once __DIR__ . "/Profile.users.php";
             require_once __DIR__ . "/Session.users.php";
@@ -30,7 +30,7 @@ class users extends API {
      * @param string $newPassword New password to be set.
      * @return bool Returns `true` if password was changed successfully.
      */
-    public function changePassword(string $newPassword){
+    public function changePassword(string $newPassword): bool{
         try {
             $response = $this->sendCall(["pass" => $newPassword], "user/changePassword");
             return $response["status"] == "ok";
@@ -44,7 +44,7 @@ class users extends API {
      * `createToken()` - Create a new non-expiring API session token.
      * @return array|bool Returns a API token or `false` otherwise.
      */
-    public function createToken(string $username, string $password, string $tokenName){
+    public function createToken(string $username, string $password, string $tokenName): array|bool{
         try {
             $response = $this->sendCall(["user" => $username, "pass" => $password, "tokenName" => $tokenName], "user/createToken");
             if($response["status"] == "ok"){
@@ -62,7 +62,7 @@ class users extends API {
      * `login()` - Login with username and password to retrieve a API session token.
      * @return array|bool Returns relevant information and the token.
      */
-    public function login(string $username, string $password){
+    public function login(string $username, string $password): array|bool{
         try {
             $response = $this->API->sendCall(["user" => $username, "pass" => $password, "includeInfo" => "true"], "user/login");
             if($response["status"] == "ok"){
@@ -80,7 +80,7 @@ class users extends API {
      * `logout()` - Logout from the current session. Making the current token invalid.
      * @return array|bool Returns relevant information and the token.
      */
-    public function logout(){
+    public function logout(): array|bool{
         try {
             $response = $this->sendCall([], "users/logout");
             return $response["status"] == "ok";

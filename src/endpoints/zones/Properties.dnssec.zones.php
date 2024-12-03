@@ -4,7 +4,7 @@ namespace Technitium\DNSServer\API\zones\dnssec;
 class properties {
     public $API;
 
-    public function __construct($api){
+    public function __construct(\Technitium\DNSServer\API\API $api){
         $this->API = $api;
     }
 
@@ -13,7 +13,7 @@ class properties {
      * @param string $zone Zone name.
      * @return bool Returns `true` if conversion was successful.
      */
-    public function convertToNSEC(string $zone){
+    public function convertToNSEC(string $zone): bool{
         $response = $this->API->sendCall(["zone" => $zone], "zones/dnssec/properties/convertToNSEC");
         return $response["status"] == "ok";
     }
@@ -23,14 +23,14 @@ class properties {
      * @param string $zone Zone name.
      * @return bool Returns `true` if conversion was successful.
      */
-    public function convertToNSEC3(string $zone){
+    public function convertToNSEC3(string $zone): bool{
         $response = $this->API->sendCall(["zone" => $zone], "zones/dnssec/properties/convertToNSEC3");
         return $response["status"] == "ok";
     }
 
     /**
      * `generatePrivateKey()` - Generate the private key of a zone.
-     * @param mixed $data Data to set. Options:
+     * @param array $data Data to set. Options:
      * - `zone`: The name of the primary zone.
      * - `keyType`: The type of key for which the private key is to be generated. Valid values are [`KeySigningKey`, `ZoneSigningKey`].
      * - `rolloverDays` (optional): The frequency in days that the DNS server must automatically rollover the private key in the zone. Valid range is 0-365 days where 0 disables rollover. Default value is 90 days for Zone Signing Key (ZSK) and 0 days for Key Signing Key (KSK).
@@ -40,7 +40,7 @@ class properties {
      * - `curve` (optional): The name of the curve to be used when using `ECDSA` algorithm. Valid values are [`P256`, `P384`]. This optional parameter is required when using `ECDSA` algorithm.
      * @return bool Returns `true` if the private key was generated successfully.
      */
-    public function generatePrivateKey($data){
+    public function generatePrivateKey(array $data){
         $response = $this->API->sendCall($data, "zones/dnssec/properties/generatePrivateKey");
         return $response["status"] == "ok";
     }

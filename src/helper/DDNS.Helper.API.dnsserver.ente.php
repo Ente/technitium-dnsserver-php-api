@@ -18,7 +18,7 @@ class DDNS {
      * @param string $uri The URI to get the public IP address from. Currently, it is set to "https://ipecho.net/plain".
      * @return string The public IP address of the server.
      */
-    public function getPublicIP(string $uri = "https://ipecho.net/plain") {
+    public function getPublicIP(string $uri = "https://ipecho.net/plain"): string {
         return trim(file_get_contents($uri));
     }
 
@@ -45,7 +45,7 @@ class DDNS {
      * @param string $domain The domain the record belongs to.
      * @return void Either adds or updates the record.
      */
-    private function processRecord(string $record, string $domain) {
+    private function processRecord(string $record, string $domain): void {
         try {
             $allrecords = $this->API->zones()->records()->get($record)["records"];
         } catch (\Throwable $th) {
@@ -82,7 +82,7 @@ class DDNS {
      * @param string $newIP The new IP address to be used.
      * @return void Updates the record.
      */
-    private function updateRecord(string $record, string $domain, string $newIP) {
+    private function updateRecord(string $record, string $domain, string $newIP): void {
         if (!$this->API->zones()->records()->update([
             "domain" => $record,
             "type" => "A",
@@ -102,7 +102,7 @@ class DDNS {
      * @param string $ipAddress The IP address to be used.
      * @return void Adds the record.
      */
-    private function addRecord(string $record, string $domain, string $ipAddress) {
+    private function addRecord(string $record, string $domain, string $ipAddress): void {
         if (!$this->API->zones()->records()->add([
             "domain" => $record,
             "type" => "A",

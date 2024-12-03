@@ -4,7 +4,7 @@ namespace Technitium\DNSServer\API\zones;
 class records {
     public $API;
 
-    public function __construct($api){
+    public function __construct(\Technitium\DNSServer\API\API $api){
         $this->API = $api;
     }
 

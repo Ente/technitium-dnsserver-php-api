@@ -4,7 +4,7 @@ namespace Technitium\DNSServer\API\zones;
 class permissions {
     public $API;
 
-    public function __construct($api){
+    public function __construct(\Technitium\DNSServer\API\API $api){
         $this->API = $api;
     }
 
@@ -15,7 +15,7 @@ class permissions {
      * @param string $groupPermissions (optional): A pipe `|` separated table data with each row containing the group name and boolean values for the view, modify and delete permissions. For example: group1|true|true|true|group2|true|true|false
      * @return bool Returns `true` if successful, `false` otherwise.
      */
-    public function set(string $zone, string $userPermissions = "", string $groupPermissions = ""){
+    public function set(string $zone, string $userPermissions = "", string $groupPermissions = ""): bool{
         $response = $this->API->sendCall(["zone" => $zone, "userPermissions" => $userPermissions, "groupPermissions" => $groupPermissions], "zones/permissions/set");
         return $response["status"] == "ok";
     }
@@ -26,7 +26,7 @@ class permissions {
      * @param bool $includeUsersAndGroups (optional) Set to `true` to include users and groups in the response. Default value is `false`.
      * @return array|bool Returns an array of permissions if successful, `false` otherwise.
      */
-    public function get(string $zone, bool $includeUsersAndGroups = false){
+    public function get(string $zone, bool $includeUsersAndGroups = false): array|bool{
         if($includeUsersAndGroups){$includeUsersAndGroups = "true";} else {$includeUsersAndGroups = "false";}
         $response = $this->API->sendCall(["zone" => $zone, "includeUsersAndGroups" => $includeUsersAndGroups], "zones/permissions/get");
         if($response["status"] == "ok"){

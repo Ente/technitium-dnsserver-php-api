@@ -9,7 +9,7 @@ class Log extends \Exception {
      * @param int $code The exception code
      * @param \Exception|null $previous A reference to the previous exception
      */
-    public function __construct($message, $code = 0, \Exception $previous = null){
+    public function __construct(string $message, int $code = 0, \Exception $previous = null){
         $trace = $this->getTraceAsString() ?? "N/A";
         $this->error_rep(message: $message, method: $trace);
         parent::__construct($message, $code, $previous);
@@ -27,7 +27,7 @@ class Log extends \Exception {
      * @param string $message The error message to be logged.
      * @param string $method Name of either the method name that called the function or the request method.
      */
-    public static function error_rep($message, $method = null){
+    public static function error_rep(string $message, string $method = null): void{
         $error_file = self::logrotate(); // file on your fs, e.g. /var/www/html/error.log
         $version = NULL;
         if($method == null){
@@ -50,7 +50,7 @@ class Log extends \Exception {
      * @param string|null $date The date to get the log file path for. Format: "Y-m-d".
      * @return string The specific log file path.
      */
-    private static function getSpecificLogFilePath($date = null){
+    private static function getSpecificLogFilePath(?string $date = null): string{
         if($date == null){
             $date = date("Y-m-d");
             return __DIR__ . "/data/logs/log-{$date}.log";

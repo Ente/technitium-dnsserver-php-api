@@ -9,7 +9,7 @@ namespace Technitium\DNSServer\API\admin;
 class groups {
     public $API;
 
-    public function __construct($api){
+    public function __construct(\Technitium\DNSServer\API\API $api){
         $this->API = $api;
     }
 
@@ -18,7 +18,7 @@ class groups {
      * - `PERMISSIONS`: `Administration:View`
      * @return array|bool Returns the result array or an error array
      */
-    public function list(){
+    public function list(): array|bool{
         $response = $this->API->sendCall([], "admin/groups/list");
         if($response["status"] == "ok"){
             return $response["response"];
@@ -34,7 +34,7 @@ class groups {
      * @param bool $includeUsers Set to `true` to include the list of users in the group.
      * @return array|bool Returns the result array or false if the group was not found.
      */
-    public function get(string $name, bool $includeUsers = true){
+    public function get(string $name, bool $includeUsers = true): array|bool{
         $includeUsers = $includeUsers ? "true" : "false";
         $response = $this->API->sendCall(["group" => $name, "includeUsers" => "true"], "admin/groups/get");
         if($response["response"]["name"] == $name){
@@ -50,7 +50,7 @@ class groups {
      * @param string $description The description text for the group (optional).
      * @return bool Returns `true` if the group was created successfully, otherwise `false`.
      */
-    public function create(string $name, string $description = null){
+    public function create(string $name, string $description = null): bool{
         $response = $this->API->sendCall(["group" => $name, "description" => $description], "admin/groups/create");
         return $response["response"]["name"] == $name;
     }
@@ -64,7 +64,7 @@ class groups {
      * @param array $members An array of users to add to the group (optional).
      * @return array|bool Returns the result array or `false` if the group was not found.
      */
-    public function set(string $name, string $newName = null, string $description = null, array $members = []){
+    public function set(string $name, string $newName = null, string $description = null, array $members = []): array|bool{
         $response = $this->API->sendCall(["group" => $name, "newGroup" => $newName, "description" => $description, "members" => implode(",", $members)], "admin/groups/set");
         if($response["response"]["name"] == $name){
             return $response["response"];
@@ -78,7 +78,7 @@ class groups {
      * @param string $name The name of the group to delete.
      * @return bool Returns the result array or an error array.
      */
-    public function delete(string $name){
+    public function delete(string $name): bool{
         $response = $this->API->sendCall(["group" => $name], "admin/groups/delete");
         return $response["status"] == "ok";
     }

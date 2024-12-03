@@ -8,7 +8,7 @@ namespace Technitium\DNSServer\API\admin;
 class permissions {
     public $API;
 
-    public function __construct($api){
+    public function __construct(\Technitium\DNSServer\API\API $api){
         $this->API = $api;
     }
 
@@ -17,7 +17,7 @@ class permissions {
      * - `PERMISSIONS`: `Administration:View`
      * @return array|bool Returns the result array or `false` if the group was not found.
      */
-    public function list(){
+    public function list(): array|bool{
         $response = $this->API->sendCall([], "admin/permissions/list");
         if($response["status"] == "ok"){
             return $response["response"];
@@ -32,7 +32,7 @@ class permissions {
      * @param bool $includeUsersAndGroups Set to `true` to include the list of users and groups with permissions. (optional)
      * @return array|bool Returns the result array or `false` if the group was not found.
      */
-    public function get(string $section, bool $includeUsersAndGroups = false){
+    public function get(string $section, bool $includeUsersAndGroups = false): array|bool{
         if($includeUsersAndGroups){ $includeUsersAndGroups = "true"; } else { $includeUsersAndGroups = "false"; }
         $response = $this->API->sendCall(["section" => $section, "includeUsersAndGroups" => $includeUsersAndGroups], "admin/permissions/get");
         if($response["status"] == "ok"){
@@ -49,7 +49,7 @@ class permissions {
      * @param string $groupPermissions The permissions to set for groups (pipe seperated table data with each row containing group names and bools for view, modify and delete permission, e.g. `Administrators|true|true|false|Example Group|true|false|false`). (optional)
      * @return array|bool Returns the result array or `false` if the group was not found.
      */
-    public function set(string $section, string $userPermissions = null, string $groupPermissions = null){
+    public function set(string $section, string $userPermissions = null, string $groupPermissions = null): array|bool{
         $response = $this->API->sendCall(["section" => $section, "userPermissions" => $userPermissions, "groupPermissions" => $groupPermissions], "admin/permissions/set");
         if($response["response"]["section"] == $section){
             return $response["response"];

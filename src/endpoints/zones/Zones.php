@@ -19,7 +19,7 @@ class zones extends API {
 
     private $options;
 
-    public function __construct($api){
+    public function __construct(\Technitium\DNSServer\API\API $api){
         $this->API = $api;
         $this->eloader();
     }

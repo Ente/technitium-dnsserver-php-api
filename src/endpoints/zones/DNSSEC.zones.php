@@ -7,12 +7,12 @@ class dnssec {
 
     private $properties;
 
-    public function __construct($api){
+    public function __construct(\Technitium\DNSServer\API\API $api){
         $this->API = $api;
         $this->eloader();
     }
 
-    private function eloader(){
+    private function eloader(): void{
         require_once __DIR__ . "/Properties.dnssec.zones.php";
     }
 
@@ -32,7 +32,7 @@ class dnssec {
      * - `saltLength` (optional): The length of salt in bytes to use for hashing in NSEC3. This optional parameter is only applicable when using `NSEC3` as the `nxProof`. Default value is `0` when not specified.
      * @return array|bool Returns an result array or `false` otherwise.
      */
-    public function sign($data){
+    public function sign($data): bool{
         $response = $this->API->sendCall($data, "zones/dnssec/sign");
         return $response["status"] == "ok";
     }
@@ -42,7 +42,7 @@ class dnssec {
      * @param string $zone The name of the zone to unsign.
      * @return bool Returns `true` if the zone was unsigned successfully, `false` otherwise.
      */
-    public function unsign(string $zone){
+    public function unsign(string $zone): bool{
         $response = $this->API->sendCall(["zone" => $zone], "zones/dnssec/unsign");
         return $response["status"] == "ok";
     }
@@ -52,7 +52,7 @@ class dnssec {
      * @param string $zone The name of the zone to view DS records.
      * @return array|bool Returns an result array or `false` otherwise.
      */
-    public function viewDS(string $zone){
+    public function viewDS(string $zone): array|bool{
         return $this->API->sendCall(["zone" => $zone], "zones/dnssec/viewDS");
     }
 

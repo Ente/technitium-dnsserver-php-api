@@ -20,12 +20,12 @@ class admin {
 
     private $groups;
 
-    public function __construct($api){
+    public function __construct(\Technitium\DNSServer\API\API $api){
         $this->API = $api;
         $this->eloader();
     }
 
-    private function eloader(){
+    private function eloader(): void{
         require_once __DIR__ . "/Groups.admin.php";
         require_once __DIR__ . "/Logs.admin.php";
         require_once __DIR__ . "/Permissions.admin.php";

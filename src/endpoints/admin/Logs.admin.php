@@ -4,7 +4,7 @@ namespace Technitium\DNSServer\API\admin;
 class logs {
     public $API;
 
-    public function __construct($api){
+    public function __construct(\Technitium\DNSServer\API\API $api){
         $this->API = $api;
     }
 
@@ -12,7 +12,7 @@ class logs {
      * `list()` - Returns a list of all log files.
      * @return array|bool Returns the result array or `false` if the group was not found.
      */
-    public function list(){
+    public function list(): array|bool{
         $response = $this->API->sendCall([], "admin/logs/list");
         if($response["status"] == "ok"){
             return $response["response"];
@@ -39,7 +39,7 @@ class logs {
      * - `qclass` (optional): The DNS class (QCLASS) in the request question section to filter the logs.
      * @return array Returns the result array or `false` if the group was not found.
      */
-    public function query($data){
+    public function query($data): array{
         return $this->API->sendCall($data, "admin/logs/query");
     }
 
@@ -49,7 +49,7 @@ class logs {
      * @param int $limit The number of mb to limit the download to.
      * @return array|bool Returns the result array or `false` if the group was not found.
      */
-    public function download(string $fileName, int $limit = 0){
+    public function download(string $fileName, int $limit = 0): array|bool{
         $response = $this->API->sendCall(["fileName" => $fileName, "limit" => $limit], "admin/logs/download");
         if($response["status"] == "ok"){
             return $response["response"];
@@ -63,7 +63,7 @@ class logs {
      * @param string $log The name of the file to delete.
      * @return bool Returns `true` if the file was deleted or `false` if the file was not found.
      */
-    public function delete(string $log){
+    public function delete(string $log): bool{
         $response = $this->API->sendCall(["log" => $log], "admin/logs/delete");
         return $response["status"] == "ok";
     }
@@ -72,7 +72,7 @@ class logs {
      * `deleteAll()` - Deletes all log files.
      * @return bool Returns `true` if the files were deleted or `false` if the files were not found.
      */
-    public function deleteAll(){
+    public function deleteAll(): bool{
         $response = $this->API->sendCall([], "admin/logs/deleteAll");
         return $response["status"] == "ok";
     }

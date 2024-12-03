@@ -10,7 +10,7 @@ class dhcp extends API {
 
     private $scopes;
 
-    public function __construct($api){
+    public function __construct(\Technitium\DNSServer\API\API $api){
         $this->API = $api;
         $this->eloader();
     }

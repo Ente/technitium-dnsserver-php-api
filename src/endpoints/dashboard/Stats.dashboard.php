@@ -4,7 +4,7 @@ namespace Technitium\DNSServer\API\dashboard;
 class stats {
     public $API;
 
-    public function __construct($api){
+    public function __construct(\Technitium\DNSServer\API\API $api){
         $this->API = $api;
     }
 
@@ -16,7 +16,7 @@ class stats {
      * @param string $end end date for `custom` type. ISO 8601 format.
      * @return array|bool Returns an result array or `false` otherwise.
      */
-    public function get(string $type = "LastHour", bool $utc = true, string $start = "", string $end = ""){
+    public function get(string $type = "LastHour", bool $utc = true, string $start = "", string $end = ""): array|bool {
         if($utc){$utc="true";}else{$utc="false";};
         $response = $this->API->sendCall(["type" => $type, "utc" => $utc, "start" => $start, "end" => $end], "cache/list");
         if($response["status"] == "ok"){
@@ -35,7 +35,7 @@ class stats {
      * @param bool $onlyRateLimitedClients True to return only rate limited clients (only if statsType is TopClients)
      * @return array|bool Returns an result array or `false` otherwise.
      */
-    public function getTop(string $type = "LastHour", string $statsType = "TopClients", int $limit = 1000, bool $noReverseLookup = false, bool $onlyRateLimitedClients = false){
+    public function getTop(string $type = "LastHour", string $statsType = "TopClients", int $limit = 1000, bool $noReverseLookup = false, bool $onlyRateLimitedClients = false): array|bool{
         $response = $this->API->sendCall(["type" => $type, "statsType" => $statsType, "limit" => $limit, "noReverseLookup" => $noReverseLookup, "onlyRateLimitedClients" => $onlyRateLimitedClients], "dashboard/stats/getTop");
         if($response["status"] == "ok"){
             return $response["response"];
@@ -48,7 +48,7 @@ class stats {
      * `delete()` - Delete all DNS statistics
      * @return bool Returns `true` if successful, `false` otherwise.
      */
-    public function deleteAll(){
+    public function deleteAll(): bool{
         $response = $this->API->sendCall([], "dashboard/stats/deleteAll");
         return $response["status"] == "ok";
     }

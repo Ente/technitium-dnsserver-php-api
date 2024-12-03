@@ -18,7 +18,7 @@ use MirazMac\DotEnv\Writer;
 
 class API {
 
-    private $protocol;
+    private string $protocol;
     private $admin;
     private $allowed;
     private $apps;
@@ -32,20 +32,20 @@ class API {
     private $zones;
     private $ddns;
     private $log;
-    private $conf;
-    private $path;
-    private $fullPath;
-    private $env = [];
+    private string $conf;
+    private string $path;
+    private string $fullPath;
+    private array $env = [];
     const PREFIX_GET = "&token=";
     const PREFIX_POST = "?token=";
 
-    public function __construct($confPath, $name = null){
+    public function __construct(string $confPath, ?string $name = null){
         $this->loader();
         $this->loadConf($confPath, $name);
         $this->setProtocol();
     }
 
-    private function setProtocol(){
+    private function setProtocol(): void{
         if($this->env["USE_HTTPS"] == "true"){
             $this->protocol = "https";
         } else {
@@ -59,7 +59,7 @@ class API {
      * @param mixed $name The name of the .env file. (optional)
      * @return void
      */
-    private function loadConf($path, $name = null){
+    private function loadConf(string $path, ?string $name = null): void{
         $this->conf = $name ?? ".env";
         if(!isset($_SERVER)){
             $path = __DIR__;
@@ -90,7 +90,7 @@ class API {
 
     }
 
-    public function loader(){
+    public function loader(): void{
         require_once __DIR__ . "/endpoints/admin/Admin.php";
         require_once __DIR__ . "/endpoints/allowed/Allowed.php";
         require_once __DIR__ . "/endpoints/apps/Apps.php";
@@ -111,12 +111,12 @@ class API {
      * `sendCall()` - Send a request to the Technitium API.
      * @param array $data The data to send to the API
      * @param string $endpoint The endpoint to send the data to, e.g. "admin/users/list"
-     * @param mixed $method The HTTP method to use. Default is "POST".
-     * @param mixed $skip Set to `true` to skip the authentication URI append.
-     * @param mixed $bypass Set to `true` to bypass the endpoint check allowing to access not (yet) implemented methods.
+     * @param string $method The HTTP method to use. Default is "POST".
+     * @param bool $skip Set to `true` to skip the authentication URI append.
+     * @param bool $bypass Set to `true` to bypass the endpoint check allowing to access not (yet) implemented methods.
      * @return array Returns the response from the API or an error (["status" => "error"]) as an array.
      */
-    public function sendCall($data, $endpoint, $method = "POST", $skip = false, $bypass = false){
+    public function sendCall(array $data, string $endpoint, string $method = "POST", bool $skip = false, bool $bypass = false): array{
         $c = curl_init();
         $endpoint = $this->prepareEndpoint($endpoint, $bypass);
         if($this->env["USE_POST"]){
@@ -161,11 +161,11 @@ class API {
 
     /**
      * `appendAuth()` - Append the authentication token to the URI.
-     * @param mixed $m The HTTP method to use. Default is "POST".
-     * @param mixed $skip Set to `true` to skip the authentication URI append, allowing the use of `API::getPermanentToken()`.
+     * @param string $m The HTTP method to use. Default is "POST".
+     * @param bool $skip Set to `true` to skip the authentication URI append, allowing the use of `API::getPermanentToken()`.
      * @return string Returns the authentication token URI string or an empty string.
      */
-    private function appendAuth($m = "POST", $skip = false){
+    private function appendAuth(string $m = "POST", bool $skip = false): string{
         $this->loadConf($this->path, $this->conf);
         $authAppend = null;
         if($skip){
@@ -206,7 +206,7 @@ class API {
      * This function is called when the token is not found in the .env file.
      * @return bool Returns `true` if the token was successfully written to the .env file.
      */
-    private function getPermanentToken(){
+    private function getPermanentToken(): bool{
         Log::error_rep("Getting permanent token... | .env: " . $this->fullPath);
         $response = $this->sendCall([
             "user" => $this->env["USERNAME"],
@@ -234,10 +234,10 @@ class API {
     /**
      * `checkResponse()` - Check if the Technitium API response is valid.
      * If the response status contains either "error" or "invalid-token" it is considered invalid.
-     * @param mixed $response The response returned by `API::sendCall()` function.
+     * @param string $response The response returned by `API::sendCall()` function.
      * @return bool Returns `true` if the response is valid, otherwise `false`.
      */
-    private function checkResponse(string $response){
+    private function checkResponse(string $response): bool{
         if(is_null($response)){
             return false;
         } else {
@@ -248,11 +248,11 @@ class API {
 
     /**
      * `prepareEndpoint()` - Generates the API URI for the endpoint in question.
-     * @param mixed $endpoint The endpoint to generate the URI for.
-     * @param mixed $bypass Set to `true` to bypass the endpoint check allowing to access not (yet) implemented methods.
+     * @param string $endpoint The endpoint to generate the URI for.
+     * @param bool $bypass Set to `true` to bypass the endpoint check allowing to access not (yet) implemented methods.
      * @return bool|string Returns the URI as string or `false` if the endpoint is not implemented.
      */
-    private function prepareEndpoint($endpoint, $bypass = false){
+    private function prepareEndpoint(string $endpoint, bool $bypass = false): bool|string{
         if($bypass){
             return $this->protocol . "://" . $this->env["API_URL"] . "/api/" . $endpoint;
         }

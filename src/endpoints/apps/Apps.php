@@ -7,12 +7,12 @@ class apps extends API {
 
     private $config;
 
-    public function __construct($api){
+    public function __construct(\Technitium\DNSServer\API\API $api){
         $this->API = $api;
         $this->eloader();
     }
 
-    private function eloader(){
+    private function eloader(): void{
         require_once __DIR__ . "/Config.apps.php";
     }
 
@@ -22,7 +22,7 @@ class apps extends API {
      * @param string $url The URL of the app. (Must start with `https://`)
      * @return array|bool Returns the result array
      */
-    public function downloadAndInstall(string $name, string $url){
+    public function downloadAndInstall(string $name, string $url): array|bool{
         $response = $this->API->sendCall(["name" => $name, "url" => $url], "apps/downloadAndInstall");
         if($response["status"] == "ok"){
             return $response["response"];
@@ -33,9 +33,9 @@ class apps extends API {
 
     /**
      * `list()` - Returns a list of all installed apps.
-     * @return array|bool Returns the result array or `false` if the group was not found. 
+     * @return array|bool Returns the result array or `false` if the group was not found.
      */
-    public function list(){
+    public function list(): array|bool{
         $response = $this->API->sendCall([], "apps/list");
         if($response["status"] == "ok"){
             return $response["response"];
@@ -50,7 +50,7 @@ class apps extends API {
      * @param string $url The URL of the app. (Must start with `https://`)
      * @return array|bool Returns the result array
      */
-    public function downloadAndUpdate(string $name, string $url){
+    public function downloadAndUpdate(string $name, string $url): array|bool{
         $response = $this->API->sendCall(["name" => $name, "url" => $url], "apps/downloadAndUpdate");
         if($response["status"] == "ok"){
             return $response["response"];
@@ -64,16 +64,16 @@ class apps extends API {
      * @param string $name The name of the app to install.
      * @return bool Returns `true` if the app was installed successfully.
      */
-    public function install(string $name){
+    public function install(string $name): bool{
         $response = $this->API->sendCall(["name" => $name], "apps/install");
         return $response["status"] == "ok";
     }
 
     /**
      * `listStoreApps()` - Returns a list of all store apps.
-     * @return array|bool Returns the result array or `false` if the group was not found. 
+     * @return array|bool Returns the result array or `false` if the group was not found.
      */
-    public function listStoreApps(){
+    public function listStoreApps(): array|bool{
         $response = $this->API->sendCall([], "apps/listStoreApps");
         if($response["status"] == "ok"){
             return $response["response"];
@@ -82,7 +82,12 @@ class apps extends API {
         }
     }
 
-    public function uninstall(string $name){
+    /**
+     * `uninstall()` - Uninstalls an app.
+     * @param string $name The name of the app to uninstall.
+     * @return bool Returns `true` if the app was uninstalled successfully.
+     */
+    public function uninstall(string $name): bool{
         $response = $this->API->sendCall(["name" => $name], "apps/uninstall");
         return $response["status"] == "ok";
     }
@@ -92,7 +97,7 @@ class apps extends API {
      * @param string $name The name of the app to update.
      * @return bool Returns `true` if the app was updated successfully.
      */
-    public function update(string $name){
+    public function update(string $name): bool{
         $response = $this->API->sendCall(["name" => $name], "apps/update");
         return $response["status"] == "ok";
     }

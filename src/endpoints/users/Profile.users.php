@@ -4,7 +4,7 @@ namespace Technitium\DNSServer\API\users;
 class profile {
     public $API;
 
-    public function __construct($api){
+    public function __construct(\Technitium\DNSServer\API\API $api){
         $this->API = $api;
     }
 
@@ -12,7 +12,7 @@ class profile {
      * `get()` - Get user profile information
      * @return array|bool Returns an result array or `false` otherwise.
      */
-    public function get(){
+    public function get(): array|bool{
         $response = $this->API->sendCall([], "users/profile/get");
         if($response["status"] == "ok"){
             return $response["response"];
@@ -27,7 +27,7 @@ class profile {
      * @param int $sessionTimeoutSeconds Session timeout in seconds.
      * @return bool Returns `true` if profile was set successfully.
      */
-    public function set(string $displayName = "", int $sessionTimeoutSeconds = 1800){
+    public function set(string $displayName = "", int $sessionTimeoutSeconds = 1800): bool{
         $response = $this->API->sendCall(["displayName" => $displayName, "sessionTimeoutSeconds" => $sessionTimeoutSeconds], "users/profile/set");
         return $response["status"] == "ok";
     }
