@@ -29,6 +29,8 @@ Then: `require_once "/path/to/vendor/autoload.php";` & `use Technitium\DNSServer
 - `USE_POST`: Specify if you want to access the API via POST (`true`) instead of GET (`false`) in default.
 - `USE_HTTPS`: Enable (`true`) HTTPS for the API connection. If your server does not support HTTPS, the API will simply return `false` to all requests.
 
+When using `$api->admin()->logs()->export("2024-12-24")` you may need to adjust the `memory_limit` in your `php.ini` file or via `ini_set()`.
+
 ## General Usage
 
 ```php
@@ -124,6 +126,13 @@ DDNS(new API(__DIR__ . "/configurations", ".env-custom"), file_get_contents("/my
 ```
 
 ## Changes
+
+### v1.2: Adding support for export functions
+
+- Added support for export functions within API classes. When using export functions note that downloading log files may take quite a while. You may also need to adjust the `memory_limit`.
+
+<!-- Added function to support downloading files -->
+<!-- Fixed incorrect endpoint URL for "Log" endpoints -->
 
 ### v1.1.4: Type safety
 

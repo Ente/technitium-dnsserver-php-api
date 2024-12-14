@@ -44,9 +44,18 @@ class blocked extends API {
 
     }
 
-    
-    public function export($data){
-        return $this->sendCall($data, "blocked/export");
+    /**
+     * `export()` - Exports all blocked zones.
+     * @return string|bool Either the file path where the blocked zones were exported to or `false` if the export failed.
+     */
+    public function export(): string|bool{
+        $result = $this->API->downloadFile("blocked/export", false, []);
+
+        if(!empty($result)){
+            return $result;
+        } else {
+            return false;
+        }
     }
 
     /**

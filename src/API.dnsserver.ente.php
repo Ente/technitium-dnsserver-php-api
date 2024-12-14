@@ -107,6 +107,55 @@ class API {
         require_once __DIR__ . "/helper/Log.Helper.API.dnsserver.ente.php";
     }
 
+    public function downloadFile($endpoint, $bypass, $data): string {
+        $c = curl_init();
+        $endpoint = $this->prepareEndpoint($endpoint, $bypass);
+        $method = "POST";
+
+        curl_setopt($c, CURLOPT_URL, $endpoint . $this->appendAuth($method));
+        curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($c, CURLOPT_HEADER, true);
+    
+        if ($method === "POST") {
+            curl_setopt($c, CURLOPT_POST, true);
+            curl_setopt($c, CURLOPT_POSTFIELDS, $data);
+        }
+    
+        $response = curl_exec($c);
+    
+        if ($response === false) {
+            $error = curl_error($c);
+            curl_close($c);
+            throw new \Exception("cURL error: $error");
+        }
+    
+        $headerSize = curl_getinfo($c, CURLINFO_HEADER_SIZE);
+        $headers = substr($response, 0, $headerSize);
+        $body = substr($response, $headerSize);
+    
+        curl_close($c);
+    
+        if (strpos($headers, 'Content-Disposition: attachment') !== false) {
+            if (preg_match('/filename="(.+?)"/', $headers, $matches)) {
+                $fileName = $matches[1];
+            } else {
+                $fileName = bin2hex(random_bytes(16)) . ".txt";
+            }
+    
+            $path = __DIR__ . "/helper/data/downloads/" . $fileName;
+            if (file_put_contents($path, $body) === false) {
+                throw new \Exception("Failed to save the downloaded file.");
+            }
+            Log::error_rep("Downloaded file: " . $path . " from endpoint: " . $endpoint);
+            return $path;
+        } else {
+            Log::error_rep("Unexpected response format: " . $body);
+            throw new \Exception("API did not return a downloadable file.");
+        }
+    }
+    
+    
+
     /**
      * `sendCall()` - Send a request to the Technitium API.
      * @param array $data The data to send to the API

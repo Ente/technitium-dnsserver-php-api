@@ -47,12 +47,12 @@ class logs {
      * `download()` - Downloads a log file.
      * @param string $fileName The name of the file to download.
      * @param int $limit The number of mb to limit the download to.
-     * @return array|bool Returns the result array or `false` if the group was not found.
+     * @return string|bool Returns the file path or `false` if the file was not found.
      */
-    public function download(string $fileName, int $limit = 0): array|bool{
-        $response = $this->API->sendCall(["fileName" => $fileName, "limit" => $limit], "admin/logs/download");
-        if($response["status"] == "ok"){
-            return $response["response"];
+    public function download(string $fileName, int $limit = 0): string|bool{
+        $response = $this->API->downloadFile("logs/download", 0, ["fileName" => $fileName, "limit" => $limit]);
+        if(!empty($response)){
+            return $response;
         } else {
             return false;
         }

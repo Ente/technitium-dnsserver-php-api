@@ -136,9 +136,9 @@
     "admin/permissions/get",
     "admin/permissions/set",
 
-    "admin/logs/list",
-    "admin/logs/download",
-    "admin/logs/delete",
-    "admin/logs/deleteAll",
-    "admin/logs/query"
+    "logs/list",
+    "logs/download",
+    "logs/delete",
+    "logs/deleteAll",
+    "logs/query"
 ]

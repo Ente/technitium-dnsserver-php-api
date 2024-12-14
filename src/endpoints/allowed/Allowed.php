@@ -64,7 +64,17 @@ class allowed extends API {
 
     }
 
-    public function export(){
-        return $this->API->sendCall([], "allowed/export");
+    /**
+     * `export()` - Exports all allowed zones.
+     * @return string|bool Either the file path where the allowed zones were exported to or `false` if the export failed.
+     */
+    public function export(): string|bool{
+        $result = $this->API->downloadFile("allowed/export", false, []);
+        
+        if(!empty($result)){
+            return $result;
+        } else {
+            return false;
+        }
     }
 }

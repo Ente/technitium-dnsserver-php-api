@@ -124,8 +124,19 @@ class zones extends API {
         return $response["status"] == "ok";
     }
 
-    public function export($data){
-        return $this->sendCall($data, "zones/export");
+    /**
+     * `export()` - Export a zone.
+     * @param string $zone The name of the zone to export.
+     * @return srring|bool Returns the file path of the exported zone or `false` otherwise.
+     */
+    public function export(string $zone): string|bool{
+        $result = $this->API->downloadFile("zones/export", false, ["zone" => $zone]);
+
+        if(!empty($result)){
+            return $result;
+        } else {
+            return false;
+        }
     }
 
     /**
