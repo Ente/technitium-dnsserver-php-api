@@ -140,5 +140,6 @@
     "logs/download",
     "logs/delete",
     "logs/deleteAll",
-    "logs/query"
+    "logs/query",
+    "logs/export"
 ]

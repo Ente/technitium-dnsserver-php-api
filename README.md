@@ -127,6 +127,11 @@ DDNS(new API(__DIR__ . "/configurations", ".env-custom"), file_get_contents("/my
 
 ## Changes
 
+### v1.2.1: Fixed and logs/export support
+
+- Added support for `logs/export` allowing you to export a DNS application log file
+- Fixed incorrect endpoint URL for some "Log" endpoints
+
 ### v1.2: Adding support for export functions
 
 - Added support for export functions within API classes. When using export functions note that downloading log files may take quite a while. You may also need to adjust the `memory_limit`.

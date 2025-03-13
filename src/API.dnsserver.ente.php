@@ -107,7 +107,7 @@ class API {
         require_once __DIR__ . "/helper/Log.Helper.API.dnsserver.ente.php";
     }
 
-    public function downloadFile($endpoint, $bypass, $data): string {
+    public function downloadFile($endpoint, $bypass, $data, $csv = false): string {
         $c = curl_init();
         $endpoint = $this->prepareEndpoint($endpoint, $bypass);
         $method = "POST";
@@ -140,6 +140,10 @@ class API {
                 $fileName = $matches[1];
             } else {
                 $fileName = bin2hex(random_bytes(16)) . ".txt";
+            }
+
+            if($csv){
+                $fileName = $fileName . ".csv";
             }
     
             $path = __DIR__ . "/helper/data/downloads/" . $fileName;

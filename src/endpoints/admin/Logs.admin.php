@@ -40,7 +40,7 @@ class logs {
      * @return array Returns the result array or `false` if the group was not found.
      */
     public function query($data): array{
-        return $this->API->sendCall($data, "admin/logs/query");
+        return $this->API->sendCall($data, "logs/query");
     }
 
     /**
@@ -64,7 +64,7 @@ class logs {
      * @return bool Returns `true` if the file was deleted or `false` if the file was not found.
      */
     public function delete(string $log): bool{
-        $response = $this->API->sendCall(["log" => $log], "admin/logs/delete");
+        $response = $this->API->sendCall(["log" => $log], "logs/delete");
         return $response["status"] == "ok";
     }
 
@@ -73,7 +73,27 @@ class logs {
      * @return bool Returns `true` if the files were deleted or `false` if the files were not found.
      */
     public function deleteAll(): bool{
-        $response = $this->API->sendCall([], "admin/logs/deleteAll");
+        $response = $this->API->sendCall([], "logs/deleteAll");
         return $response["status"] == "ok";
+    }
+
+    public function exportAppLog($data): string|bool{
+        $response = $this->API->downloadFile("logs/export", 0, [
+            "classPath" => $data["classPath"],
+            "start" => $data["start"],
+            "end" => $data["end"],
+            "clientIpAddress" => $data["clientIpAddress"],
+            "protocol" => $data["protocol"],
+            "responseType" => $data["responseType"],
+            "rcode" => $data["rcode"],
+            "qname" => $data["qname"],
+            "qtype" => $data["qtype"],
+            "qclass" => $data["qclass"]
+        ]);
+        if(!empty($response)){
+            return $response;
+        } else {
+            return false;
+        }
     }
 }
